@@ -26,7 +26,7 @@
             </el-col>
             <el-col :span="1.2">
               <el-form-item >
-                  <el-button size="medium" type="primary" @click="selectUser" plain>搜索</el-button>
+                  <el-button size="medium" type="primary" @click="loading" plain>搜索</el-button>
               </el-form-item>
             </el-col>
             <el-col :span="1">
@@ -38,7 +38,7 @@
         </el-form>
         <!-- 用户数据 -->
         <div style="margin-bottom: 10px">
-          <el-button type="primary" size="medium">+ 新增</el-button>
+          <el-button type="primary" size="medium" @click="addUser">+ 新增</el-button>
         </div>
         <el-table
             :data="userList"
@@ -55,7 +55,7 @@
                 width="150"
                 label="头像"
                 >
-                <template slot-scope="scope">{{ scope.row.url }}</template>
+                <template slot-scope="scope"><img :src="scope.row.url" width="60px"/></template>
            </el-table-column>
            <el-table-column
                 label="昵称"
@@ -74,7 +74,7 @@
            </el-table-column>
            <el-table-column
                 label="身份证号"
-                width="150">
+                width="180">
                 <template slot-scope="scope">{{ scope.row.idCard }}</template>
            </el-table-column>
            <el-table-column
@@ -84,24 +84,33 @@
            </el-table-column>
            <el-table-column
                 label="邮箱"
-                width="150">
+                width="210">
                 <template slot-scope="scope">{{ scope.row.email }}</template>
            </el-table-column>
            <el-table-column
                 label="状态"
-                width="150">
-                 <template slot-scope="scope">{{ scope.row.status | statusFilter }}</template>
+                width="70">
+                 <template slot-scope="scope">
+                    <el-switch
+                      v-model="scope.row.status"
+                      :active-value="1"
+                      :inactive-value="2"
+                      active-color="#13ce66"
+                      inactive-color=""
+                      @change="status_switch(scope.row)">
+                    </el-switch>
+                 </template>
            </el-table-column>
            <el-table-column
                 label="操作">
                  <template slot-scope="scope">
                    <el-button type="text" style="color:#4794F7" size="mini">详情</el-button>
-                   <el-button type="text" style="color:#19D185" size="mini" >修改</el-button>
-                   <el-button type="text" style="color:#F52222" size="mini" >删除</el-button>
+                   <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
+                   <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
                  </template>
            </el-table-column>
         </el-table>
-      </el-main>
+      </el-main>  
       <el-footer>
       </el-footer>
     </el-container>
@@ -109,7 +118,7 @@
 </template>
 
 <script>
-  import { findAll } from '@/api/system/userManage.js'
+  import { findAll, status, deleteUser } from '@/api/system/userManage.js'
   export default{
     data() {
       return{
@@ -131,11 +140,6 @@
     },
     methods: {
       loading(){
-        findAll().then(res => {
-          this.userList = res.data.data
-        })
-      },
-      selectUser(){
         const param = {
           'username': selectParam.username,
           'status': selectParam.status
@@ -143,6 +147,67 @@
         findAll(param).then(res => {
           this.userList = res.data.data
         })
+      },
+      status_switch(row){
+        const status_val = row.status
+        status({'userId': row.id}).then(res => {
+          if(status_val === 1){
+            row.status = 1
+          }else if(status_val === 2){
+            row.status = 2
+          }
+          this.$notify({
+            title: '成功',
+            message: (status_val === 2 ? '禁用' : '启用') + '成功',
+            type: 'success',
+            duration: 3000
+          });
+        }).catch(err => {
+          if(status_val === 1){
+            row.status = 2
+          }else if(status_val === 2){
+            row.status = 1
+          }
+        })
+      },
+      addUser(){
+        const type = 1
+        this.$router.push({
+          name: 'userAdd',
+          params: {
+            type: type
+          }
+        })
+      },
+      updateUser(row){
+        const type = 2
+        this.$router.push({
+          name: 'userUpdate',
+          params: {
+            type: type,
+            id: row.id
+          }
+        })
+      },
+      deleteUser(row){
+        const id = row.id
+        this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          deleteUser({id: id}).then()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.loading()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       }
     }
   }

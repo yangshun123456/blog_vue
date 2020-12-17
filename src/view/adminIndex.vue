@@ -15,7 +15,8 @@
               <li class="nav-item nav-item-has-subnav">
                 <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> <span>系统管理</span></a>
                 <ul class="nav nav-subnav">
-                  <li> <router-link to="/adminIndex/system" class="multitabs" href="lyear_ui_typography.html">用户管理</router-link> </li>
+                  <li> <router-link to="/adminIndex/system/user" class="multitabs" >用户管理</router-link> </li>
+                  <li> <router-link to="/adminIndex/system/systemInfo" class="multitabs" >系统信息</router-link> </li>
                 </ul>
               </li>
               <li class="nav-item nav-item-has-subnav">
@@ -259,9 +260,9 @@
     methods: {
       getRouterInfo(){
         //从此路由获取object并通过filter筛选出带name的路由参数
-        let matched = this.$route.matched.filter(item => item.name)
+        let matched = this.$route.matched.filter(item => item.meta.title)
         this.titleMessage = matched
-        console.log(this.titleMessage)
+        // console.log(this.titleMessage)
       }
     }
   }
