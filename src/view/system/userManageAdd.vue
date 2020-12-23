@@ -5,8 +5,8 @@
 			<el-row :gutter="20">
 			  <el-col :span="10"><el-button type="primary" plain size="mini" icon="el-icon-back" @click="back">返回</el-button></el-col>
 			  <el-col :span="11"><div><p style="margin: auto;">用户新增</p></div></el-col>
-			  <el-col :span="1"><el-button type="primary" plain size="mini" @click="back">取消</el-button></el-col>
-			  <el-col :span="1"><el-button type="primary" plain size="mini" @click="submit">确定</el-button></el-col>
+			  <el-col :span="1"><el-button v-if="type != 3" type="primary" plain size="mini" @click="back" >取消</el-button></el-col>
+			  <el-col :span="1"><el-button v-if="type != 3" type="primary" plain size="mini" @click="submit">确定</el-button></el-col>
         <el-col :span="1"></el-col>
 			</el-row>
       <el-divider></el-divider>
@@ -16,8 +16,9 @@
       <el-form :inline="true" :model="formInline" label-width="250px" size="small" v-loading="loading" :rules="rules">
         <el-row :gutter="0">
           <el-col :span="12">
-            <el-form-item label="上传头像: ">
+            <el-form-item label="头像: ">
                 <el-upload
+									:disabled="type == 3"
                   v-model="formInline.url"
                   class="avatar-uploader"
                   :action="upLoadUrl"
@@ -32,18 +33,18 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="用户名: " style="position: absolute;bottom: 0;" prop="username">
-                <el-input v-model="formInline.username" placeholder="请输入用户名" style="width: 300px;"></el-input>
+                <el-input v-model="formInline.username" placeholder="请输入用户名" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="0">
           <el-col :span="12">
             <el-form-item label="密码: " prop="password">
-                <el-input v-model="formInline.password" placeholder="请输入密码" style="width: 300px;"></el-input>
+                <el-input v-model="formInline.password" placeholder="请输入密码" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="确认密码: " prop="password1">
+            <el-form-item label="确认密码: " prop="password1" v-if="type != 3">
                   <el-input v-model="formInline.password1" placeholder="请再次输入密码" style="width: 300px;"></el-input>
             </el-form-item>
           </el-col>
@@ -51,36 +52,36 @@
         <el-row :gutter="0">
           <el-col :span="12">
             <el-form-item label="真实姓名: ">
-                <el-input v-model="formInline.relname" placeholder="请输入姓名" style="width: 300px;"></el-input>
+                <el-input v-model="formInline.relname" placeholder="请输入姓名" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="昵称: ">
-                  <el-input v-model="formInline.nickname" placeholder="请输入昵称" style="width: 300px;"></el-input>
+                  <el-input v-model="formInline.nickname" placeholder="请输入昵称" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="0">
           <el-col :span="12">
             <el-form-item label="手机号: ">
-                <el-input v-model="formInline.phone" placeholder="请输入手机号" style="width: 300px;"></el-input>
+                <el-input v-model="formInline.phone" placeholder="请输入手机号" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="邮箱: ">
-                  <el-input v-model="formInline.email" placeholder="请输入邮箱" style="width: 300px;"></el-input>
+                  <el-input v-model="formInline.email" placeholder="请输入邮箱" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="0">
           <el-col :span="12">
             <el-form-item label="身份证号: " prop="idCard">
-                <el-input v-model="formInline.idCard" placeholder="请输入手机号" style="width: 300px;"></el-input>
+                <el-input v-model="formInline.idCard" placeholder="请输入手机号" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="邮箱: ">
-                  <el-input v-model="formInline.email" placeholder="请输入邮箱" style="width: 300px;"></el-input>
+                  <el-input v-model="formInline.email" placeholder="请输入邮箱" style="width: 300px;" :disabled="type == 3"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -94,6 +95,7 @@
           <el-col :span="12">
             <el-form-item label="备注: ">
               <el-input
+							  :disabled="type == 3"
                 type="textarea"
                 :rows="3"
                 placeholder="请输入内容"
@@ -150,10 +152,11 @@
         this.$router.go(-1)
       },
       initData(){
-        if(this.type == 2 ) {
+        if(this.type != 1) {
           detail({id: this.id}).then(res => {
             this.formInline = res.data.data
             this.formInline.password = null
+						this.imageUrl = res.data.data.url
           })
         }
       },

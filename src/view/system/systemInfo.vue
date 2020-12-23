@@ -116,7 +116,6 @@
       initSoctJs(){
         const wsTopic = '/topic/server'
         const url = process.env.BASE_API + '/socketBlog'
-        console.log(url)
         //建立socket连接
         this.socket = new SockJS(url);
         this.stompClient = Stomp.over(this.socket);

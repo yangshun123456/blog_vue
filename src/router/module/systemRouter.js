@@ -21,7 +21,7 @@ export const userRouter = {
       },
     },
     {
-      path: 'add',
+      path: 'userAdd',
       name: 'userAdd',
       component: UserAdd,
       meta: {
@@ -29,13 +29,21 @@ export const userRouter = {
       }
     },
     {
-      path: 'update/:id/:type',
+      path: 'userUpdate/:id/:type',
       name: 'userUpdate',
       component: UserAdd,
       meta: {
         title:'用户修改'
       }
     },
+		{
+		  path: 'userDetail/:id/:type',
+		  name: 'userDetail',
+		  component: UserAdd,
+		  meta: {
+		    title:'用户详情'
+		  }
+		},
     {
       path: 'systemInfo',
       name: 'systemInfo',

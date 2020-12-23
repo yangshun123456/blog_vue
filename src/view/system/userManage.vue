@@ -14,7 +14,7 @@
             </el-col>
             <el-col :span="4" :offset="0">
               <el-form-item label="状态:" >
-                  <el-select v-model="selectParam.statusOption" placeholder="请选择状态" class="half" size="small">
+                  <el-select v-model="selectParam.status" placeholder="请选择状态" class="half" size="small" @change="loading">
                       <el-option
                         v-for="item in statusOption"
                         :key="item.id"
@@ -31,7 +31,7 @@
             </el-col>
             <el-col :span="1">
               <el-form-item >
-                  <el-button size="medium">重置</el-button>
+                  <el-button size="medium" @click="reset">重置</el-button>
               </el-form-item>
             </el-col>
           </el-row>
@@ -104,7 +104,7 @@
            <el-table-column
                 label="操作">
                  <template slot-scope="scope">
-                   <el-button type="text" style="color:#4794F7" size="mini">详情</el-button>
+                   <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">详情</el-button>
                    <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
                    <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
                  </template>
@@ -121,8 +121,11 @@
   import { findAll, status, deleteUser } from '@/api/system/userManage.js'
   export default{
     data() {
-      return{
-        selectParam: {},
+      return {
+        selectParam: {
+		  username: '',
+		  status: ''
+		},
         statusOption: [
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },
@@ -130,7 +133,7 @@
         userList: []
       }
     },
-    created(){
+    mounted() {
       this.loading()
     },
     filters:{
@@ -140,14 +143,12 @@
     },
     methods: {
       loading(){
-        const param = {
-          'username': selectParam.username,
-          'status': selectParam.status
-        }
+        const param = this.selectParam
         findAll(param).then(res => {
           this.userList = res.data.data
         })
       },
+	  
       status_switch(row){
         const status_val = row.status
         status({'userId': row.id}).then(res => {
@@ -208,9 +209,24 @@
             message: '已取消删除'
           });
         });
-      }
-    }
-  }
+      },
+			reset(){
+				this.selectParam.username = ''
+				this.selectParam.status = ''
+				this.loading()
+			},
+			detailUser(row) {
+				const type = 3
+				this.$router.push({
+				  name: 'userDetail',
+				  params: {
+				    type: type,
+				    id: row.id
+				  }
+				})
+			}
+		}
+	}
 </script>
 
 <style>
