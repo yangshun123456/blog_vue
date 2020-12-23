@@ -16,6 +16,7 @@
                 <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> <span>系统管理</span></a>
                 <ul class="nav nav-subnav">
                   <li> <router-link to="/adminIndex/system/user" class="multitabs" >用户管理</router-link> </li>
+									<li> <router-link to="/adminIndex/system/menuManage" class="multitabs" >菜单管理</router-link> </li>
                   <li> <router-link to="/adminIndex/system/systemInfo" class="multitabs" >系统信息</router-link> </li>
                 </ul>
               </li>

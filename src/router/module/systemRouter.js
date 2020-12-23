@@ -4,6 +4,8 @@ import UserManager from '@/view/system/userManage.vue'
 import SystemInfo from '@/view/system/systemInfo.vue'
 import UserAdd from '@/view/system/userManageAdd.vue'
 
+import MenuManage from '@/view/system/menu/menuManage.vue'
+
 export const userRouter = {
   path: 'system',
   component: System,
@@ -51,6 +53,14 @@ export const userRouter = {
       meta: {
         title:'系统信息'
       }
-    }
+    },
+		{
+		  path: 'menuManage',
+		  name: 'menuManage',
+		  component: MenuManage,
+		  meta: {
+		    title:'菜单管理'
+		  }
+		}
   ]
 }
