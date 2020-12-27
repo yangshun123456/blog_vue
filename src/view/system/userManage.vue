@@ -123,9 +123,9 @@
     data() {
       return {
         selectParam: {
-		  username: '',
-		  status: ''
-		},
+					username: '',
+					status: ''
+				},
         statusOption: [
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },

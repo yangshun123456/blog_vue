@@ -9,7 +9,7 @@
           <el-row>
             <el-col :span="4" :offset="1">
               <el-form-item label="菜单名称:">
-                  <el-input v-model="selectParam.username" placeholder="请输入菜单名称" class="half" size="small"></el-input>
+                  <el-input v-model="selectParam.menuName" placeholder="请输入菜单名称" class="half" size="small"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="4" :offset="0">
@@ -40,76 +40,27 @@
         <div style="margin-bottom: 10px">
           <el-button type="primary" size="medium" @click="addUser">+ 新增</el-button>
         </div>
-        <el-table
-            :data="userList"
+          <el-table
+            :data="tableData"
+            style="width: 100%;margin-bottom: 20px;"
+            row-key="id"
             border
-            style="width: 100%"
-            v-loading = "false">
-           <el-table-column
-                fixed
-                label="序号"
-                width="150"
-                type="index">
-           </el-table-column>
-           <el-table-column
-                width="150"
-                label="头像"
-                >
-                <template slot-scope="scope"><img :src="scope.row.url" width="60px"/></template>
-           </el-table-column>
-           <el-table-column
-                label="昵称"
-                width="150">
-                <template slot-scope="scope">{{ scope.row.nickname }}</template>
-           </el-table-column>
-           <el-table-column
-                label="用户名"
-                width="150">
-                <template slot-scope="scope">{{ scope.row.username }}</template>
-           </el-table-column>
-           <el-table-column
-                label="真实姓名"
-                width="150">
-                <template slot-scope="scope">{{ scope.row.relname }}</template>
-           </el-table-column>
-           <el-table-column
-                label="身份证号"
-                width="180">
-                <template slot-scope="scope">{{ scope.row.idCard }}</template>
-           </el-table-column>
-           <el-table-column
-                label="手机号"
-                width="150">
-                <template slot-scope="scope">{{ scope.row.phone }}</template>
-           </el-table-column>
-           <el-table-column
-                label="邮箱"
-                width="210">
-                <template slot-scope="scope">{{ scope.row.email }}</template>
-           </el-table-column>
-           <el-table-column
-                label="状态"
-                width="70">
-                 <template slot-scope="scope">
-                    <el-switch
-                      v-model="scope.row.status"
-                      :active-value="1"
-                      :inactive-value="2"
-                      active-color="#13ce66"
-                      inactive-color=""
-                      @change="status_switch(scope.row)">
-                    </el-switch>
-                 </template>
-           </el-table-column>
-           <el-table-column
-                label="操作">
-                 <template slot-scope="scope">
-                   <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">详情</el-button>
-                   <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
-                   <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
-                 </template>
-           </el-table-column>
-        </el-table>
+            default-expand-all
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+						v-loading = "false">
+						<el-table-column
+						     width="150"
+						     label="菜单名称"
+						     >
+						     <template slot-scope="scope">{{scope.row.menuName}}</template>
+						</el-table-column>
+						<el-table-column
+						     width="150"
+						     label="图标"
+						     >
+						     <template slot-scope="scope">{{scope.row.menuName}}</template>
+						</el-table-column>
+					</el-table>
       </el-main>  
       <el-footer>
       </el-footer>
@@ -118,6 +69,8 @@
 </template>
 
 <script>
+	import { findAll } from '@/api/system/menuManage.js'
+	
   export default{
 		data() {
 		  return {
