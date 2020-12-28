@@ -1,4 +1,3 @@
-复制代码
 import Vue from 'vue'
 import SvgIcon from '@/components/SvgIcon'// svg组件
 

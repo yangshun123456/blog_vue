@@ -38,7 +38,7 @@
         </el-form>
         <!-- 用户数据 -->
         <div style="margin-bottom: 10px">
-          <el-button type="primary" size="medium" @click="addUser">+ 新增</el-button>
+          <el-button type="primary" size="medium" @click="">+ 新增</el-button>
         </div>
           <el-table
             :data="tableData"
@@ -58,10 +58,10 @@
 						     width="150"
 						     label="图标"
 						     >
-						     <template slot-scope="scope">{{scope.row.menuName}}</template>
+						     <template slot-scope="scope"><svg-icon :icon-class="scope.row.ico_url" /></template>
 						</el-table-column>
 					</el-table>
-      </el-main>  
+      </el-main>
       <el-footer>
       </el-footer>
     </el-container>
@@ -70,15 +70,20 @@
 
 <script>
 	import { findAll } from '@/api/system/menuManage.js'
-	
+
   export default{
 		data() {
 		  return {
-				selectParam: {}
+				selectParam: {},
+        tableData: [],
+        statusOption: [
+          { 'id': 1,value:'启动' },
+          { 'id': 2,value:'停用' },
+        ],
 		  }
 		},
 		mounted() {
-		  
+
 		},
 		filters:{
 		  statusFilter(val) {
@@ -86,7 +91,14 @@
 		  }
 		},
 		methods: {
-		  
+      loading(){
+
+      },
+      reset(){
+      	this.selectParam.username = ''
+      	this.selectParam.status = ''
+      	this.loading()
+      },
 		},
 	}
 </script>
