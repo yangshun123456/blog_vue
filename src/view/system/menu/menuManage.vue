@@ -43,13 +43,12 @@
           <el-table
             :data="tableData"
             style="width: 100%;margin-bottom: 20px;"
-            row-key="id"
+            row-key="menuId"
             border
-            default-expand-all
             :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-						v-loading = "false">
+						v-loading = "loadings">
 						<el-table-column
-						     width="150"
+						     width="200"
 						     label="菜单名称"
 						     >
 						     <template slot-scope="scope">{{scope.row.menuName}}</template>
@@ -58,7 +57,45 @@
 						     width="150"
 						     label="图标"
 						     >
-						     <template slot-scope="scope"><svg-icon :icon-class="scope.row.ico_url" /></template>
+						     <template slot-scope="scope"><svg-icon :icon-class="scope.row.icoUrl" /></template>
+						</el-table-column>
+						<el-table-column
+						     width="150"
+						     label="排序"
+						     >
+						     <template slot-scope="scope">{{scope.row.orderNum}}</template>
+						</el-table-column>
+						<el-table-column
+						     width="200"
+						     label="权限标识"
+						     >
+						     <template slot-scope="scope">{{scope.row.perms}}</template>
+						</el-table-column>
+						<el-table-column
+						     width="300"
+						     label="组件路径"
+						     >
+						     <template slot-scope="scope">{{scope.row.routerName}}</template>
+						</el-table-column>
+						<el-table-column
+						     width="150"
+						     label="状态"
+						     >
+						     <template slot-scope="scope">{{scope.row.status}}</template>
+						</el-table-column>
+						<el-table-column
+						     width="250"
+						     label="创建时间"
+						     >
+						     <template slot-scope="scope">{{scope.row.createTime}}</template>
+						</el-table-column>
+						<el-table-column
+						     label="操作">
+						      <template slot-scope="scope">
+						        <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">新增</el-button>
+						        <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
+						        <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
+						      </template>
 						</el-table-column>
 					</el-table>
       </el-main>
@@ -80,10 +117,11 @@
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },
         ],
+				loadings: true
 		  }
 		},
 		mounted() {
-
+			this.loading()
 		},
 		filters:{
 		  statusFilter(val) {
@@ -92,10 +130,19 @@
 		},
 		methods: {
       loading(){
-
+				const param = {
+					menuName : this.selectParam.menuName,
+					status : this.selectParam.status
+				}
+				findAll(param).then(res => {
+					this.tableData = res.data.data
+					this.loadings = false
+				}).catch(err =>{
+					this.loadings = false
+				})
       },
       reset(){
-      	this.selectParam.username = ''
+      	this.selectParam.menuName = ''
       	this.selectParam.status = ''
       	this.loading()
       },

@@ -10,7 +10,27 @@
         </div>
         <div class="lyear-layout-sidebar-info lyear-scroll">
           <nav class="sidebar-main">
-            <ul class="nav-drawer">
+						<el-menu
+							default-active="2"
+							class="el-menu-vertical-demo">
+							<span v-for="(item,index) in permissions" :index="item.menuId+''" :key="item.menuId">
+								<el-menu-item v-if="typeof(item.children) == 'undefined' || item.children.length === 0" :index="item.menuId+''">
+										<svg-icon :icon-class="item.icoUrl" /> &nbsp;&nbsp;
+										<span slot="title">{{item.menuName}}</span>
+								</el-menu-item>
+								<el-submenu v-else :index="item.menuId+''">
+									<span slot="title">
+										<svg-icon :icon-class="item.icoUrl"/> &nbsp;&nbsp;
+										{{item.menuName}}
+								  </span>
+									<el-menu-item v-for="(item_ch,index_ch) in item.children" :index="item_ch.menuId+''" :key="item_ch.menuId">
+										<svg-icon :icon-class="item_ch.icoUrl" /> &nbsp;&nbsp;
+										<span slot="title">{{item_ch.menuName}}</span>
+									</el-menu-item>
+								</el-submenu>
+							</span>
+						</el-menu>
+           <!-- <ul class="nav-drawer">
               <li class="nav-item active"> <a class="multitabs" href="lyear_main.html"><i class="mdi mdi-home"></i> <span>后台首页</span></a> </li>
               <li class="nav-item nav-item-has-subnav">
                 <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> <span>系统管理</span></a>
@@ -20,31 +40,7 @@
                   <li> <router-link to="/adminIndex/system/systemInfo" class="multitabs" >系统信息</router-link> </li>
                 </ul>
               </li>
-              <li class="nav-item nav-item-has-subnav">
-                <a href="javascript:void(0)"><i class="mdi mdi-format-align-justify"></i> <span>表单</span></a>
-                <ul class="nav nav-subnav">
-                  <li> <a class="multitabs" href="lyear_forms_elements.html">基本元素</a> </li>
-                </ul>
-              </li>
-              <li class="nav-item nav-item-has-subnav">
-                <a href="javascript:void(0)"><i class="mdi mdi-tools"></i> <span>工具类</span></a>
-                <ul class="nav nav-subnav">
-                  <li> <a class="multitabs" href="lyear_utilities_borders.html">边框</a> </li>
-                </ul>
-              </li>
-              <li class="nav-item nav-item-has-subnav">
-                <a href="javascript:void(0)"><i class="mdi mdi-file-outline"></i> <span>示例页面</span></a>
-                <ul class="nav nav-subnav">
-                  <li> <a class="multitabs" href="lyear_pages_doc.html">文档列表</a> </li>
-                </ul>
-              </li>
-              <li class="nav-item nav-item-has-subnav">
-                <a href="javascript:void(0)"><i class="mdi mdi-language-javascript"></i> <span>JS 插件</span></a>
-                <ul class="nav nav-subnav">
-                  <li> <a class="multitabs" href="lyear_js_datepicker.html">日期选取器</a> </li>
-                </ul>
-              </li>
-            </ul>
+            </ul> -->
           </nav>
 
           <div class="sidebar-footer">
@@ -243,19 +239,25 @@
 </template>
 
 <script>
+	import { getPermission } from '@/api/system/menuManage.js'
+	
+	
   export default{
     data() {
       return{
-        titleMessage: []
+        titleMessage: [],
+				permissions: []
       }
     },
     created(){
       this.getRouterInfo()
+			this.getPermission()
     },
     watch: {
       //路由变化时调用方法
       $route(){
         this.getRouterInfo()
+				this.getPermission()
       }
     },
     methods: {
@@ -264,7 +266,13 @@
         let matched = this.$route.matched.filter(item => item.meta.title)
         this.titleMessage = matched
         // console.log(this.titleMessage)
-      }
+      },
+			getPermission(){
+				//获取当前用户的菜单权限
+				getPermission().then(res => {
+					this.permissions = res.data.data
+				}).catch(res => {})
+			}
     }
   }
 </script>

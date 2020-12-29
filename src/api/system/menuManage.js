@@ -7,3 +7,11 @@ export function findAll(query){
     params: query
   })
 }
+
+export function getPermission(query){
+  return request({
+    url: '/sysMenu/getPermission',
+    method: 'get',
+    params: query
+  })
+}
