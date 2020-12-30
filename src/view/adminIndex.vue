@@ -16,16 +16,16 @@
 							<span v-for="(item,index) in permissions" :index="item.menuId+''" :key="item.menuId">
 								<el-menu-item v-if="typeof(item.children) == 'undefined' || item.children.length === 0" :index="item.menuId+''">
 										<svg-icon :icon-class="item.icoUrl" /> &nbsp;&nbsp;
-										<span slot="title">{{item.menuName}}</span>
+										<span slot="title"><router-link :to="item.routerName">{{item.menuName}}</router-link></span>
 								</el-menu-item>
 								<el-submenu v-else :index="item.menuId+''">
 									<span slot="title">
 										<svg-icon :icon-class="item.icoUrl"/> &nbsp;&nbsp;
-										{{item.menuName}}
+										<router-link :to="item.routerName">{{item.menuName}}</router-link>
 								  </span>
 									<el-menu-item v-for="(item_ch,index_ch) in item.children" :index="item_ch.menuId+''" :key="item_ch.menuId">
 										<svg-icon :icon-class="item_ch.icoUrl" /> &nbsp;&nbsp;
-										<span slot="title">{{item_ch.menuName}}</span>
+                    <router-link :to="item_ch.routerName">{{item_ch.menuName}}</router-link>
 									</el-menu-item>
 								</el-submenu>
 							</span>
@@ -240,8 +240,8 @@
 
 <script>
 	import { getPermission } from '@/api/system/menuManage.js'
-	
-	
+
+
   export default{
     data() {
       return{

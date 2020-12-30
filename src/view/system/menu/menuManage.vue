@@ -69,7 +69,7 @@
 						     width="200"
 						     label="权限标识"
 						     >
-						     <template slot-scope="scope">{{scope.row.perms}}</template>
+						     <template slot-scope="scope">{{scope.row.menuType | permsFilter}}</template>
 						</el-table-column>
 						<el-table-column
 						     width="300"
@@ -107,7 +107,8 @@
 
 <script>
 	import { findAll } from '@/api/system/menuManage.js'
-
+  import { menuAdd } from '@/components/system/menu/menuAdd.vue'
+  
   export default{
 		data() {
 		  return {
@@ -126,7 +127,10 @@
 		filters:{
 		  statusFilter(val) {
 		    return { 1: '正常', 2: '停用'}[val]
-		  }
+		  },
+      permsFilter(val) {
+        return { M: '目录','C': '菜单',F: '按钮' }[val]
+      }
 		},
 		methods: {
       loading(){
