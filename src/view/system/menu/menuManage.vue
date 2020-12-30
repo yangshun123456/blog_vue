@@ -4,6 +4,7 @@
       <el-header height="10px">
       </el-header>
       <el-main>
+				<menuAdd :isShow="true">23</menuAdd>
         <!-- 搜索框 -->
         <el-form :inline="true" :model="selectParam" class="demo-form-inline">
           <el-row>
@@ -107,7 +108,7 @@
 
 <script>
 	import { findAll } from '@/api/system/menuManage.js'
-  import { menuAdd } from '@/components/system/menu/menuAdd.vue'
+  import menuAdd from '@/components/system/menu/menuAdd.vue'
   
   export default{
 		data() {
@@ -131,6 +132,9 @@
       permsFilter(val) {
         return { M: '目录','C': '菜单',F: '按钮' }[val]
       }
+		},
+		components:{
+			menuAdd
 		},
 		methods: {
       loading(){
