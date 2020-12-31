@@ -15,3 +15,11 @@ export function getPermission(query){
     params: query
   })
 }
+
+export function save(data){
+  return request({
+    url: '/sysMenu/save',
+    method: 'post',
+    data: data
+  })
+}

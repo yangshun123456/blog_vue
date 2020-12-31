@@ -4,7 +4,7 @@
       <el-header height="10px">
       </el-header>
       <el-main>
-				<menuAdd :isShow="true">23</menuAdd>
+				<menuAdd :isShow="isShow" @closeIt="closeIt" :id="menuId"></menuAdd>
         <!-- 搜索框 -->
         <el-form :inline="true" :model="selectParam" class="demo-form-inline">
           <el-row>
@@ -15,14 +15,14 @@
             </el-col>
             <el-col :span="4" :offset="0">
               <el-form-item label="状态:" >
-                  <el-select v-model="selectParam.status" placeholder="请选择状态" class="half" size="small" @change="loading">
-                      <el-option
-                        v-for="item in statusOption"
-                        :key="item.id"
-                        :label="item.value"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
+                <el-select v-model="selectParam.status" placeholder="请选择状态" class="half" size="small" @change="loading">
+                  <el-option
+                    v-for="item in statusOption"
+                    :key="item.id"
+                    :label="item.value"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="1.2">
@@ -39,7 +39,7 @@
         </el-form>
         <!-- 用户数据 -->
         <div style="margin-bottom: 10px">
-          <el-button type="primary" size="medium" @click="">+ 新增</el-button>
+          <el-button type="primary" size="medium" @click="showIt(0)">+ 新增</el-button>
         </div>
           <el-table
             :data="tableData"
@@ -93,7 +93,7 @@
 						<el-table-column
 						     label="操作">
 						      <template slot-scope="scope">
-						        <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">新增</el-button>
+						        <el-button type="text" style="color:#4794F7" size="mini" @click="showIt(scope.row.menuId)">新增</el-button>
 						        <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
 						        <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
 						      </template>
@@ -109,7 +109,7 @@
 <script>
 	import { findAll } from '@/api/system/menuManage.js'
   import menuAdd from '@/components/system/menu/menuAdd.vue'
-  
+
   export default{
 		data() {
 		  return {
@@ -119,7 +119,9 @@
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },
         ],
-				loadings: true
+				loadings: true,
+        isShow : false,
+        menuId: 0
 		  }
 		},
 		mounted() {
@@ -154,6 +156,13 @@
       	this.selectParam.status = ''
       	this.loading()
       },
+      closeIt(){
+        this.isShow = false
+      },
+      showIt(id){
+        this.isShow = true
+        this.menuId = id
+      }
 		},
 	}
 </script>
