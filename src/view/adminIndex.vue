@@ -221,7 +221,7 @@
                 </li>
                 <li class="dropdown-divider"></li>
                 <li>
-                  <a class="dropdown-item" href="lyear_pages_login_1.html"><i class="mdi mdi-logout-variant"></i> 退出登录</a>
+                  <a class="dropdown-item" @click="logout"><i class="mdi mdi-logout-variant"></i> 退出登录</a>
                 </li>
               </ul>
             </li>
@@ -240,7 +240,7 @@
 
 <script>
 	import { getPermission } from '@/api/system/menuManage.js'
-
+	import { logout } from '@/api/system/userManage.js'
 
   export default{
     data() {
@@ -272,6 +272,30 @@
 				getPermission().then(res => {
 					this.permissions = res.data.data
 				}).catch(res => {})
+			},
+			logout(){
+				this.$confirm('是否退出登录?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					logout().then(res => {
+						this.$message({
+							type: 'success',
+							message: '退出成功!'
+						});			
+					}).catch(err => {
+						this.$message({
+							type: 'info',
+							message: '退出失败'
+						});  
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});          
+				});
 			}
     }
   }

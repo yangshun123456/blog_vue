@@ -39,3 +39,11 @@ export function deleteUser(query){
     params: query
   })
 }
+
+export function logout(query){
+  return request({
+    url: '/user/logout',
+    method: 'get',
+    params: query
+  })
+}

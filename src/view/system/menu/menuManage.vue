@@ -4,7 +4,7 @@
       <el-header height="10px">
       </el-header>
       <el-main>
-				<menuAdd :isShow="isShow" @closeIt="closeIt" :id="menuId"></menuAdd>
+				<menuAdd :isShow="isShow" @closeIt="closeIt" :id="menuId" :isUpdate="isUpdate"></menuAdd>
         <!-- 搜索框 -->
         <el-form :inline="true" :model="selectParam" class="demo-form-inline">
           <el-row>
@@ -51,51 +51,74 @@
 						<el-table-column
 						     width="200"
 						     label="菜单名称"
+								 align="center"
 						     >
 						     <template slot-scope="scope">{{scope.row.menuName}}</template>
 						</el-table-column>
 						<el-table-column
-						     width="150"
+						     width="80"
 						     label="图标"
+								 align="center"
 						     >
 						     <template slot-scope="scope"><svg-icon :icon-class="scope.row.icoUrl" /></template>
 						</el-table-column>
 						<el-table-column
-						     width="150"
+						     width="80"
 						     label="排序"
+								 align="center"
 						     >
 						     <template slot-scope="scope">{{scope.row.orderNum}}</template>
 						</el-table-column>
 						<el-table-column
-						     width="200"
+						     width="100"
 						     label="权限标识"
+								 align="center"
 						     >
 						     <template slot-scope="scope">{{scope.row.menuType | permsFilter}}</template>
 						</el-table-column>
 						<el-table-column
 						     width="300"
 						     label="组件路径"
+								 align="center"
 						     >
 						     <template slot-scope="scope">{{scope.row.routerName}}</template>
 						</el-table-column>
 						<el-table-column
-						     width="150"
-						     label="状态"
+						     width="300"
+						     label="后台权限"
+								 align="center"
 						     >
-						     <template slot-scope="scope">{{scope.row.status}}</template>
+						     <template slot-scope="scope">{{scope.row.perms}}</template>
 						</el-table-column>
 						<el-table-column
-						     width="250"
+						     width="150"
+						     label="状态"
+								 align="center"
+						     >
+						     <template slot-scope="scope">
+									 <el-switch
+									   v-model="scope.row.status"
+									   active-color="#13ce66"
+									   :active-value="1"
+									   :inactive-value="2"
+										 @change="status(scope.row.menuId)">
+									 </el-switch>
+								 </template>
+						</el-table-column>
+						<el-table-column
+						     width="200"
 						     label="创建时间"
+								 align="center"
 						     >
 						     <template slot-scope="scope">{{scope.row.createTime}}</template>
 						</el-table-column>
 						<el-table-column
-						     label="操作">
+						     label="操作"
+								 align="center">
 						      <template slot-scope="scope">
 						        <el-button type="text" style="color:#4794F7" size="mini" @click="showIt(scope.row.menuId)">新增</el-button>
-						        <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
-						        <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
+						        <el-button type="text" style="color:#19D185" size="mini" @click="update(scope.row.menuId)">修改</el-button>
+						        <el-button type="text" style="color:#F52222" size="mini" @click="deleteMenu(scope.row)">删除</el-button>
 						      </template>
 						</el-table-column>
 					</el-table>
@@ -107,7 +130,7 @@
 </template>
 
 <script>
-	import { findAll } from '@/api/system/menuManage.js'
+	import { findAll, deleteMenu, status } from '@/api/system/menuManage.js'
   import menuAdd from '@/components/system/menu/menuAdd.vue'
 
   export default{
@@ -121,7 +144,8 @@
         ],
 				loadings: true,
         isShow : false,
-        menuId: 0
+        menuId: 0,
+				isUpdate: false
 		  }
 		},
 		mounted() {
@@ -156,14 +180,64 @@
       	this.selectParam.status = ''
       	this.loading()
       },
+			//页面关闭
       closeIt(){
         this.isShow = false
+				this.isUpdate = false
+				this.loading()
       },
+			//新增页面显示
       showIt(id){
         this.isShow = true
         this.menuId = id
-      }
-		},
+				this.isUpdate = false
+      },
+			//删除菜单
+			deleteMenu(row){
+				this.$confirm('此操作将永久删除该菜单, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					const param = {
+						id: row.menuId
+					}
+					deleteMenu(param).then(res => {
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+						this.loading()
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});          
+				});
+			},
+			//修改界面显示
+			update(id){
+				this.isShow = true
+				this.menuId = id
+				this.isUpdate = true
+			},
+			//修改状态
+			status(id){
+				const param = {
+					id: id
+				}
+				status(param).then(res => {
+					this.$message({
+						type: 'success',
+						message: res.data.data === 1 ? '启用成功': '禁用成功'
+					});
+					this.loading()
+				}).catch(err => {
+					
+				})
+			}
+		}
 	}
 </script>
 

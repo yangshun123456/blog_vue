@@ -10,7 +10,7 @@
       <el-form :model="formData" label-width="80px" id="showForm" :rules="rules">
         <el-row>
           <el-col :span="24">
-						<el-form-item label="上级菜单:">
+						<el-form-item label="上级菜单:" label-width="90px">
 							<treeselect
 								v-model="formData.parentId"
 								:options="menuData"
@@ -21,7 +21,7 @@
 						</el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="菜单类型:">
+            <el-form-item label="菜单类型:" label-width="90px">
               <el-radio-group v-model="formData.menuType" style="position: relative;top: 3px;">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
@@ -40,7 +40,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item v-if="formData.menuType != 'F'" label="菜单图标:">
+            <el-form-item v-if="formData.menuType != 'F'" label="菜单图标:" label-width="90px">
               <el-popover
                 placement="bottom-start"
                 width="460"
@@ -61,8 +61,8 @@
               </el-popover>
             </el-form-item>
           </el-col>
-          <el-col :span="15">
-            <el-form-item label="菜单名称:">
+          <el-col :span="14">
+            <el-form-item label="菜单名称:" prop="menuName" label-width="90px">
               <el-input v-model="formData.menuName" placeholder="请输入菜单名称"/>
             </el-form-item>
           </el-col>
@@ -72,7 +72,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-             <el-form-item label="路由地址:">
+             <el-form-item label="路由地址:" label-width="90px">
                <el-input v-model="formData.routerName" placeholder="请输入路由地址"></el-input>
              </el-form-item>
           </el-col>
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-  import { getPermission, save } from '@/api/system/menuManage.js'
+  import { getPermission, save, detail} from '@/api/system/menuManage.js'
   // import the component
   import Treeselect from '@riophae/vue-treeselect'
   // import the styles
@@ -105,34 +105,67 @@
 				 menuType: 'M',
          icoUrl: '',
          orderNum: 1,
-         status: 1
+         status: 1,
+				 parentId: 0
+			 },
+			 rules:{
+				 menuName:[
+					  { required: true, message: '请输入菜单名称', trigger: 'blur' }
+				 ]
 			 }
       }
     },
     props:{
       id: Number,
-			isShow: Boolean
+			isShow: Boolean,
+			isUpdate: Boolean
     },
 		components:{
 			Treeselect,IconSelect
 		},
     mounted() {
-			this.getMenu()
+			// this.getMenu()
     },
     watch:{
       isShow(val,newVal){
-        this.getMenu()
-        this.formData.parentId = this.id
+				this.formData = {
+				 menuType: 'M',
+         icoUrl: '',
+         orderNum: 1,
+         status: 1,
+				 parentId: 0
+			 }
+				this.menuData = []
+				//如果是修改界面
+				if(this.isUpdate){
+					const param = {
+						id: this.id
+					}
+					detail(param).then(res => {
+						this.formData = res.data.data
+						this.getMenu(this.formData.parentId)
+					})
+				}else{
+					this.getMenu(this.id)
+					this.formData.parentId = this.id
+				}
       }
     },
     methods:{
       // 获取父级菜单
-      getMenu(){
+      getMenu(id){
         const param = {
-          menuId: this.id
+          menuId: id
         }
         getPermission(param).then(res => {
           this.menuData = res.data.data
+					const top = {
+						menuId: 0,
+						menuName: '顶部',
+						parentId: 0,
+						children: []
+					}
+					this.menuData.unshift(top)
         })
       },
       /** 转换菜单数据结构 */
@@ -149,6 +182,8 @@
       //关闭组件
 			handleClose(){
         //触发父组件的方法，并向方法中传递数值
+				this.formData = {}
+				this.menuData = []
         this.$emit('closeIt')
       },
       selected(name) {
@@ -157,13 +192,12 @@
       submit(){
         var param = this.formData
         save(param).then(res => {
+					this.$message({
+						type: 'success',
+						message: this.isUpdate ? '修改成功':'新增成功'
+					});
           this.$emit('closeIt')
-        }).catch(err => {
-
-        })
-      },
-      rules(){
-        
+        }).catch(err => {})
       }
     },
 
