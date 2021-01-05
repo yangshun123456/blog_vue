@@ -6,6 +6,8 @@ import UserAdd from '@/view/system/userManageAdd.vue'
 
 import MenuManage from '@/view/system/menu/menuManage.vue'
 
+import RoleManage from '@/view/system/role/roleManage.vue'
+
 export const userRouter = {
   path: 'system',
   component: System,
@@ -61,6 +63,14 @@ export const userRouter = {
 		  meta: {
 		    title:'菜单管理'
 		  }
-		}
+		},
+    {
+      path: 'roleManage',
+      name: 'roleManage',
+      component: RoleManage,
+      meta: {
+        title:'菜单管理'
+      }
+    }
   ]
 }

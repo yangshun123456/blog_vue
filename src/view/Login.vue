@@ -150,6 +150,7 @@
             if (error !== 'error') {
               this.$message({message: error, type: 'error', showClose: true});
             }
+            this.changePic()
         })
       },
       changePic(){

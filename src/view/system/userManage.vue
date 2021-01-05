@@ -126,8 +126,17 @@
                  </template>
            </el-table-column>
         </el-table>
-      </el-main>  
+      </el-main>
       <el-footer>
+         <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="selectParam.pageNum"
+              :page-sizes="page_sizes"
+              :page-size="selectParam.pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total">
+            </el-pagination>
       </el-footer>
     </el-container>
   </div>
@@ -140,13 +149,17 @@
       return {
         selectParam: {
 					username: '',
-					status: ''
+					status: '',
+          pageNum: 1,
+          pageSize: 10
 				},
         statusOption: [
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },
         ],
-        userList: []
+        userList: [],
+        page_sizes: [10, 20, 30, 50],
+        total: 0
       }
     },
     mounted() {
@@ -161,10 +174,12 @@
       loading(){
         const param = this.selectParam
         findAll(param).then(res => {
-          this.userList = res.data.data
+          this.userList = res.data.data.list
+          this.pageNum = res.data.data.pageNum
+          this.total = res.data.data.total
         })
       },
-	  
+
       status_switch(row){
         const status_val = row.status
         status({'userId': row.id}).then(res => {
@@ -240,7 +255,15 @@
 				    id: row.id
 				  }
 				})
-			}
+			},
+      //分页size改变时
+      handleSizeChange(val){
+        this.selectParam.pageSize = val
+      },
+      //当前页改变触发
+      handleCurrentChange(val){
+        this.selectParam.pageNum = val
+      }
 		}
 	}
 </script>

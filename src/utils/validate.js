@@ -81,3 +81,11 @@ export function isArray(arg) {
   }
   return Array.isArray(arg)
 }
+
+//判断对象是否为undifine和null
+export function isNotNull(arg) {
+  if (typeof arg === 'undefined' || arg === null) {
+    return false
+  }
+  return true
+}

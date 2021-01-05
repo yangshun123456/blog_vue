@@ -12,20 +12,27 @@
           <nav class="sidebar-main">
 						<el-menu
 							default-active="2"
-							class="el-menu-vertical-demo">
+							class="el-menu-vertical-demo"
+              :collapse="isCollapse">
 							<span v-for="(item,index) in permissions" :index="item.menuId+''" :key="item.menuId">
 								<el-menu-item v-if="typeof(item.children) == 'undefined' || item.children.length === 0" :index="item.menuId+''">
+                  <!-- <router-link :to="item.routerName"> -->
 										<svg-icon :icon-class="item.icoUrl" /> &nbsp;&nbsp;
-										<span slot="title"><router-link :to="item.routerName">{{item.menuName}}</router-link></span>
+										<span slot="title">{{item.menuName}}</span>
+                  <!-- </router-link> -->
 								</el-menu-item>
 								<el-submenu v-else :index="item.menuId+''">
 									<span slot="title">
-										<svg-icon :icon-class="item.icoUrl"/> &nbsp;&nbsp;
-										<router-link :to="item.routerName">{{item.menuName}}</router-link>
+                    <!-- <router-link :to="item.routerName"> -->
+                      <svg-icon :icon-class="item.icoUrl"/> &nbsp;&nbsp;
+                      <span slot="title">{{item.menuName}}</span>
+                    <!-- </router-link> -->
 								  </span>
 									<el-menu-item v-for="(item_ch,index_ch) in item.children" :index="item_ch.menuId+''" :key="item_ch.menuId">
-										<svg-icon :icon-class="item_ch.icoUrl" /> &nbsp;&nbsp;
-                    <router-link :to="item_ch.routerName">{{item_ch.menuName}}</router-link>
+                    <!-- <router-link :to="item_ch.routerName"> -->
+                      <svg-icon :icon-class="item_ch.icoUrl" /> &nbsp;&nbsp;
+                      <span slot="title" >{{item_ch.menuName}}</span>
+                    <!-- </router-link> -->
 									</el-menu-item>
 								</el-submenu>
 							</span>
@@ -57,11 +64,12 @@
         <nav class="navbar">
 
           <div class="navbar-left align-items-center d-flex">
-            <div class="lyear-aside-toggler" style="float: left;">
+            <!-- <div class="lyear-aside-toggler" style="float: left;" @click="closeSide">
               <span class="lyear-toggler-bar"></span>
               <span class="lyear-toggler-bar"></span>
               <span class="lyear-toggler-bar"></span>
-            </div>
+            </div> -->
+            <el-button type="normal" icon="el-icon-s-fold" size="medium" style="border: none;" :plain="true" @click="closeSide"/> &nbsp;&nbsp;
             <div>
               <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item v-for="(item,index) in titleMessage" :key="index" :to="item.path">{{item.meta.title}}</el-breadcrumb-item>
@@ -246,7 +254,8 @@
     data() {
       return{
         titleMessage: [],
-				permissions: []
+				permissions: [],
+        isCollapse: false
       }
     },
     created(){
@@ -283,20 +292,28 @@
 						this.$message({
 							type: 'success',
 							message: '退出成功!'
-						});			
+						});
 					}).catch(err => {
 						this.$message({
 							type: 'info',
 							message: '退出失败'
-						});  
+						});
 					})
 				}).catch(() => {
 					this.$message({
 						type: 'info',
 						message: '已取消删除'
-					});          
+					});
 				});
-			}
+			},
+      //关闭左侧栏
+      closeSide(){
+        if(this.isCollapse){
+          this.isCollapse = false
+        }else{
+          this.isCollapse = true
+        }
+      }
     }
   }
 </script>
