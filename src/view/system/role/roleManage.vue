@@ -4,6 +4,7 @@
         <el-header height="10px">
         </el-header>
         <el-main>
+          <roleAdd :isShow="isShow" :id="roleId" :isUpdate="isUpdate" @closeIt="closeIt" @loading="loading"></roleAdd>
           <!-- 搜索框 -->
           <el-form :inline="true" :model="selectParam" class="demo-form-inline">
             <el-row>
@@ -19,14 +20,14 @@
               </el-col>
               <el-col :span="4" :offset="1">
                 <el-form-item label="状态:" >
-                    <el-select v-model="selectParam.status" placeholder="请选择状态" class="half" size="small" @change="loading">
-                        <el-option
-                          v-for="item in statusOption"
-                          :key="item.id"
-                          :label="item.value"
-                          :value="item.id">
-                        </el-option>
-                      </el-select>
+                  <el-select v-model="selectParam.status" placeholder="请选择状态" class="half" size="small" @change="loading">
+                      <el-option
+                        v-for="item in statusOption"
+                        :key="item.id"
+                        :label="item.value"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="8" :offset="1">
@@ -34,7 +35,7 @@
                   <el-date-picker
                     v-model="chooseTime"
                     type="daterange"
-                    range-separator="至"
+                    range-separator="-"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     value-format="yyyy-MM-dd"
@@ -56,7 +57,7 @@
           </el-form>
           <!-- 用户数据 -->
           <div style="margin-bottom: 10px">
-            <el-button type="primary" size="medium" @click="addUser">+ 新增</el-button>
+            <el-button type="primary" size="medium" @click="addRole(0)">+ 新增</el-button>
           </div>
           <el-table
               :data="roleList"
@@ -112,12 +113,18 @@
                    </template>
              </el-table-column>
              <el-table-column
+                  label="备注"
+                  width="180"
+                  align="center">
+                  <template slot-scope="scope">{{ scope.row.remark }}</template>
+             </el-table-column>
+             <el-table-column
                   label="操作"
   								align="center">
                    <template slot-scope="scope">
-                     <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">详情</el-button>
-                     <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
-                     <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
+                     <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)"></el-button>
+                     <el-button type="text" style="color:#19D185" size="mini" @click="addRole(scope.row.id)">修改</el-button>
+                     <el-button type="text" style="color:#F52222" size="mini" @click="deleteRole(scope.row)">删除</el-button>
                    </template>
              </el-table-column>
           </el-table>
@@ -139,7 +146,8 @@
 
 <script>
   import { isNotNull } from '@/utils/validate.js'
-  import { findAll } from '@/api/system/roleManage.js'
+  import { findAll, deleteRole } from '@/api/system/roleManage.js'
+  import  RoleAdd  from '@/components/system/role/roleAdd.vue'
 
   export default{
     data() {
@@ -160,7 +168,10 @@
         ],
         roleList: [],
         page_sizes: [10, 20, 30, 50],
-        total: 0
+        total: 0,
+        isShow : false,
+        roleId: 0,
+        isUpdate: false
       }
     },
     mounted() {
@@ -170,6 +181,9 @@
       statusFilter(val) {
         return { 1: '正常', 2: '停用'}[val]
       }
+    },
+    components:{
+      RoleAdd
     },
     methods: {
       loading(){
@@ -209,14 +223,16 @@
           }
         })
       },
-      addUser(){
-        const type = 1
-        this.$router.push({
-          name: 'userAdd',
-          params: {
-            type: type
-          }
-        })
+      addRole(id){
+        this.isUpdate = false
+        this.isShow = true
+        this.roleId = id
+      },
+      //关闭弹窗
+      closeIt(){
+        this.isUpdate = false
+        this.isShow = false
+        this.roleId = 0
       },
       updateUser(row){
         const type = 2
@@ -228,22 +244,23 @@
           }
         })
       },
-      deleteUser(row){
+      deleteRole(row){
         const id = row.id
-        this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteUser({id: id}).then()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          this.loading()
+          deleteRole({id: id}).then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.loading()
+          })
         }).catch(() => {
           this.$message({
-            type: 'info',
+            type: 'warning',
             message: '已取消删除'
           });
         });
@@ -252,8 +269,7 @@
   			this.selectParam.roleName = ''
         this.selectParam.roleKey = ''
   			this.selectParam.status = ''
-        this.selectParam.startTime = ''
-        this.selectParam.endTime = ''
+        this.chooseTime = []
   			this.loading()
   		},
   		detailUser(row) {

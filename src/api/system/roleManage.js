@@ -7,3 +7,36 @@ export function findAll(query){
     params: query
   })
 }
+
+export function deleteRole(query){
+  return request({
+    url: '/sysRole/delete',
+    method: 'get',
+    params: query
+  })
+}
+
+export function findAllMenu(query){
+  return request({
+    url: '/sysRole/findAllMenu',
+    method: 'get',
+    params: query
+  })
+}
+
+
+export function detail(query){
+  return request({
+    url: '/sysRole/detail',
+    method: 'get',
+    params: query
+  })
+}
+
+export function save(data){
+  return request({
+    url: '/sysRole/save',
+    method: 'post',
+    data: data
+  })
+}

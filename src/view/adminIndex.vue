@@ -10,34 +10,64 @@
         </div>
         <div class="lyear-layout-sidebar-info lyear-scroll">
           <nav class="sidebar-main">
-						<el-menu
+						<!-- <el-menu
 							default-active="2"
 							class="el-menu-vertical-demo"
               :collapse="isCollapse">
 							<span v-for="(item,index) in permissions" :index="item.menuId+''" :key="item.menuId">
-								<el-menu-item v-if="typeof(item.children) == 'undefined' || item.children.length === 0" :index="item.menuId+''">
-                  <!-- <router-link :to="item.routerName"> -->
-										<svg-icon :icon-class="item.icoUrl" /> &nbsp;&nbsp;
-										<span slot="title">{{item.menuName}}</span>
-                  <!-- </router-link> -->
-								</el-menu-item>
-								<el-submenu v-else :index="item.menuId+''">
-									<span slot="title">
-                    <!-- <router-link :to="item.routerName"> -->
-                      <svg-icon :icon-class="item.icoUrl"/> &nbsp;&nbsp;
-                      <span slot="title">{{item.menuName}}</span>
-                    <!-- </router-link> -->
-								  </span>
-									<el-menu-item v-for="(item_ch,index_ch) in item.children" :index="item_ch.menuId+''" :key="item_ch.menuId">
-                    <!-- <router-link :to="item_ch.routerName"> -->
-                      <svg-icon :icon-class="item_ch.icoUrl" /> &nbsp;&nbsp;
-                      <span slot="title" >{{item_ch.menuName}}</span>
-                    <!-- </router-link> -->
-									</el-menu-item>
-								</el-submenu>
+                <span v-if="typeof(item.children) == 'undefined' || item.children.length === 0">
+                  <router-link :to="item.routerName">
+                    <el-menu-item  :index="item.menuId+''">
+                        <svg-icon :icon-class="item.icoUrl" /> &nbsp;&nbsp;
+                        <span slot="title">{{ item.menuName }}</span>
+                    </el-menu-item>
+                  </router-link>
+                </span>
+                <span v-else>
+                  <router-link :to="item.routerName">
+                    <el-submenu>
+                      <template slot="title">
+                        <svg-icon :icon-class="item.icoUrl"/> &nbsp;&nbsp;
+                        <span slot="title">{{ item.menuName }}</span>
+                      </template>
+                      <span v-for="(item_ch,index_ch) in item.children" :key="item_ch.menuId">
+                        <router-link :to="item_ch.routerName">
+                          <el-menu-item :index="item_ch.menuId+''" >
+                            <svg-icon :icon-class="item_ch.icoUrl" /> &nbsp;&nbsp;
+                            <span slot="title" >{{ item_ch.menuName }}</span>
+                          </el-menu-item>
+                        </router-link>
+                      </span>
+                    </el-submenu>
+                  </router-link>
+                </span>
 							</span>
-						</el-menu>
-           <!-- <ul class="nav-drawer">
+						</el-menu> -->
+            <ul class="nav-drawer" v-for="(item,index) in permissions" :index="item.menuId+''" :key="item.menuId">
+              <li class="nav-item active" v-if="typeof(item.children) == 'undefined' || item.children.length === 0" >
+                <router-link class="multitabs" :to="item.routerName" >
+                  <i class="mdi"><svg-icon :icon-class="item.icoUrl" />&nbsp;</i>
+                  <span>{{ item.menuName }}</span>
+                </router-link>
+              </li>
+              <li v-else class="nav-item nav-item-has-subnav" >
+                <router-link :to="item.routerName" class="multitabs">
+                  <i class="mdi"><svg-icon :icon-class="item.icoUrl"/>&nbsp;</i>
+                  <span>{{ item.menuName }}</span>
+                </router-link>
+                <ul class="nav nav-subnav">
+                  <span v-for="(item_ch,index_ch) in item.children" :index="item_ch.menuId+''" :key="item_ch.menuId">
+                    <li>
+                      <router-link :to="item_ch.routerName" class="multitabs">
+                        <i class="mdi"><svg-icon :icon-class="item_ch.icoUrl" />&nbsp;&nbsp;</i>
+                        <span>{{ item_ch.menuName }}</span>
+                      </router-link>
+                    </li>
+                  </span>
+                </ul>
+              </li>
+            </ul>
+            <!-- <ul class="nav-drawer">
               <li class="nav-item active"> <a class="multitabs" href="lyear_main.html"><i class="mdi mdi-home"></i> <span>后台首页</span></a> </li>
               <li class="nav-item nav-item-has-subnav">
                 <a href="javascript:void(0)"><i class="mdi mdi-palette"></i> <span>系统管理</span></a>
@@ -64,12 +94,12 @@
         <nav class="navbar">
 
           <div class="navbar-left align-items-center d-flex">
-            <!-- <div class="lyear-aside-toggler" style="float: left;" @click="closeSide">
+            <div class="lyear-aside-toggler" style="float: left;" @click="closeSide">
               <span class="lyear-toggler-bar"></span>
               <span class="lyear-toggler-bar"></span>
               <span class="lyear-toggler-bar"></span>
-            </div> -->
-            <el-button type="normal" icon="el-icon-s-fold" size="medium" style="border: none;" :plain="true" @click="closeSide"/> &nbsp;&nbsp;
+            </div>
+            <!-- <el-button type="normal" icon="el-icon-s-fold" size="medium" style="border: none;" :plain="true" @click="closeSide"/> &nbsp;&nbsp; -->
             <div>
               <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item v-for="(item,index) in titleMessage" :key="index" :to="item.path">{{item.meta.title}}</el-breadcrumb-item>
