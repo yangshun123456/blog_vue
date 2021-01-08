@@ -104,13 +104,15 @@
             jvm: [],
             sys: [],
             sysFile: []
-        }
+        },
+        loading: true
       }
     },
     methods:{
       initData(){
         systemInfo().then(res => {
           this.server = res.data.data
+
         })
       },
       initSoctJs(){

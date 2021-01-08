@@ -32,3 +32,11 @@ export function systemInfo(param){
     params: param
   })
 }
+
+export function getUserDetail(param){
+  return request({
+    url: '/user/getUserDetail',
+    method: 'get',
+    params: param
+  })
+}

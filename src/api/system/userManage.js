@@ -47,3 +47,4 @@ export function logout(query){
     params: query
   })
 }
+

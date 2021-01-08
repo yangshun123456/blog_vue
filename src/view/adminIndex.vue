@@ -244,8 +244,8 @@
             <!--切换主题配色-->
             <li class="dropdown dropdown-profile">
               <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                <img class="img-avatar img-avatar-48 m-r-10" src="../assets/images/users/avatar.jpg" alt="笔下光年" />
-                <span>笔下光年</span>
+                <img class="img-avatar img-avatar-48 m-r-10" :src="user.url" />
+                <span>{{user.nickname}}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-right">
                 <li>
@@ -279,13 +279,15 @@
 <script>
 	import { getPermission } from '@/api/system/menuManage.js'
 	import { logout } from '@/api/system/userManage.js'
+  import { getUserDetail } from '@/api/login.js'
 
   export default{
     data() {
       return{
         titleMessage: [],
 				permissions: [],
-        isCollapse: false
+        isCollapse: false,
+        user: {}
       }
     },
     created(){
@@ -307,6 +309,10 @@
         // console.log(this.titleMessage)
       },
 			getPermission(){
+        //获取用户信息
+        getUserDetail().then(res => {
+          this.user = res.data.data.sysUser
+        })
 				//获取当前用户的菜单权限
 				getPermission().then(res => {
 					this.permissions = res.data.data
@@ -323,6 +329,7 @@
 							type: 'success',
 							message: '退出成功!'
 						});
+            this.$router.push('/logins')
 					}).catch(err => {
 						this.$message({
 							type: 'info',

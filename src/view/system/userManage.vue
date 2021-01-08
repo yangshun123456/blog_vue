@@ -151,14 +151,14 @@
 					username: '',
 					status: '',
           pageNum: 1,
-          pageSize: 10
+          pageSize: 8
 				},
         statusOption: [
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },
         ],
         userList: [],
-        page_sizes: [10, 20, 30, 50],
+        page_sizes: [8, 16, 30, 50],
         total: 0
       }
     },
@@ -259,10 +259,12 @@
       //分页size改变时
       handleSizeChange(val){
         this.selectParam.pageSize = val
+        this.loading()
       },
       //当前页改变触发
       handleCurrentChange(val){
         this.selectParam.pageNum = val
+        this.loading()
       }
 		}
 	}

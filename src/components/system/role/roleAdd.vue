@@ -5,7 +5,8 @@
       :visible.sync="isShow"
       width="25%"
       :before-close="handleClose"
-      class="dialog_title">
+      class="dialog_title"
+      :close-on-click-modal="false">
       <div ref="diva" v-loading="loading">
         <el-form :model="formData" label-width="80px" id="showForm" :rules="rules" ref="formAdd">
           <el-row>
@@ -47,7 +48,7 @@
               </el-form-item>
             </el-col :span="24">
             <el-col :span="10" :offset="15">
-              <el-button type="primary" @click="submit">确定</el-button>
+              <el-button type="primary" @click="submit" :loading="loadingButton">确定</el-button>
               <el-button @click="handleClose">取消</el-button>
             </el-col>
           </el-row>
@@ -78,7 +79,8 @@
          children: 'children'
        },
        menuExpand: false,
-       loading: false
+       loading: false,
+       loadingButton: false
       }
     },
     props:{
@@ -142,12 +144,17 @@
       },
       //提交
       submit(){
+        this.loadingButton = true
         //获取选中菜单权限
-        const menus = this.$refs.menu.getCheckedNodes()
+        const menus = this.$refs.menu.getCheckedNodes(false, true)
+        console.log(menus)
         this.formData.sysMenus = menus
         save(this.formData).then(res => {
           this.handleClose()
+          this.loadingButton = false
           this.$emit('loading')
+        }).catch(err => {
+          this.loadingButton = false
         })
       }
     }

@@ -40,3 +40,19 @@ export function save(data){
     data: data
   })
 }
+
+export function getUsers(query){
+  return request({
+    url: '/sysRole/getUsers',
+    method: 'get',
+    params: query
+  })
+}
+
+export function setUsers(data){
+  return request({
+    url: '/sysRole/setUsers',
+    method: 'post',
+    data: data
+  })
+}

@@ -5,6 +5,7 @@
         </el-header>
         <el-main>
           <roleAdd :isShow="isShow" :id="roleId" :isUpdate="isUpdate" @closeIt="closeIt" @loading="loading"></roleAdd>
+          <AddUser :isShow="userShow" @closeIt="closeUser" :id="roleId"></AddUser>
           <!-- 搜索框 -->
           <el-form :inline="true" :model="selectParam" class="demo-form-inline">
             <el-row>
@@ -122,7 +123,7 @@
                   label="操作"
   								align="center">
                    <template slot-scope="scope">
-                     <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)"></el-button>
+                     <el-button type="text" style="color:#4794F7" size="mini" @click="addUser(scope.row.id)">添加用户</el-button>
                      <el-button type="text" style="color:#19D185" size="mini" @click="addRole(scope.row.id)">修改</el-button>
                      <el-button type="text" style="color:#F52222" size="mini" @click="deleteRole(scope.row)">删除</el-button>
                    </template>
@@ -147,7 +148,8 @@
 <script>
   import { isNotNull } from '@/utils/validate.js'
   import { findAll, deleteRole } from '@/api/system/roleManage.js'
-  import  RoleAdd  from '@/components/system/role/roleAdd.vue'
+  import RoleAdd  from '@/components/system/role/roleAdd.vue'
+  import AddUser from '@/components/system/role/addUser.vue'
 
   export default{
     data() {
@@ -159,7 +161,7 @@
           startTime: '',
           endTime: '',
           pageNum: 1,
-          pageSize: 10
+          pageSize: 8
   			},
         chooseTime: [],
         statusOption: [
@@ -167,9 +169,10 @@
           { 'id': 2,value:'停用' },
         ],
         roleList: [],
-        page_sizes: [10, 20, 30, 50],
+        page_sizes: [8, 16, 30, 50],
         total: 0,
         isShow : false,
+        userShow: false,
         roleId: 0,
         isUpdate: false
       }
@@ -183,7 +186,7 @@
       }
     },
     components:{
-      RoleAdd
+      RoleAdd, AddUser
     },
     methods: {
       loading(){
@@ -200,29 +203,6 @@
           this.total = res.data.data.total
         })
       },
-
-      status_switch(row){
-        const status_val = row.status
-        status({'userId': row.id}).then(res => {
-          if(status_val === 1){
-            row.status = 1
-          }else if(status_val === 2){
-            row.status = 2
-          }
-          this.$notify({
-            title: '成功',
-            message: (status_val === 2 ? '禁用' : '启用') + '成功',
-            type: 'success',
-            duration: 3000
-          });
-        }).catch(err => {
-          if(status_val === 1){
-            row.status = 2
-          }else if(status_val === 2){
-            row.status = 1
-          }
-        })
-      },
       addRole(id){
         this.isUpdate = false
         this.isShow = true
@@ -233,16 +213,6 @@
         this.isUpdate = false
         this.isShow = false
         this.roleId = 0
-      },
-      updateUser(row){
-        const type = 2
-        this.$router.push({
-          name: 'userUpdate',
-          params: {
-            type: type,
-            id: row.id
-          }
-        })
       },
       deleteRole(row){
         const id = row.id
@@ -285,14 +255,25 @@
       //分页size改变时
       handleSizeChange(val){
         this.selectParam.pageSize = val
+        this.loading()
       },
       //当前页改变触发
       handleCurrentChange(val){
         this.selectParam.pageNum = val
+        this.loading()
       },
       handleSelectionChange(val){
         //获取选择对象中的id
         const ids = val.map(item => item.id)
+      },
+      //分配用户到角色
+      addUser(id){
+        this.roleId = id
+        this.userShow = true
+      },
+      closeUser(){
+        this.userShow = false
+        this.roleId = 0
       }
   	}
   }

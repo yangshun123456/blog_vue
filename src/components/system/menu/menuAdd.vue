@@ -6,6 +6,7 @@
       width="35%"
       :before-close="handleClose"
       class="dialog_title"
+      :close-on-click-modal="false"
       >
       <el-form :model="formData" label-width="80px" id="showForm" :rules="rules">
         <el-row>

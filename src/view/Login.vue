@@ -145,7 +145,7 @@
         }
         this.$store.dispatch('login', formDatas).then((res)=>{
           // setToken(res.data.data)
-          this.$router.push("/")
+          this.$router.push("/adminIndex")
         }).catch((error) => {
             if (error !== 'error') {
               this.$message({message: error, type: 'error', showClose: true});
@@ -163,7 +163,6 @@
     mounted() {
       captcha().then(res => {
         this.captchas = res.data.data
-        console.log(this.captchas)
       })
     },
     created() {
