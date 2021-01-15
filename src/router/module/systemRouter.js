@@ -8,6 +8,9 @@ import MenuManage from '@/view/system/menu/menuManage.vue'
 
 import RoleManage from '@/view/system/role/roleManage.vue'
 
+import DicManager from '@/view/system/dic/dicManager.vue'
+import DictData from '@/view/system/dic/dictData.vue'
+
 export const userRouter = {
   path: 'system',
   component: System,
@@ -70,6 +73,22 @@ export const userRouter = {
       component: RoleManage,
       meta: {
         title:'菜单管理'
+      }
+    },
+    {
+      path: 'dicManager',
+      name: 'dicManager',
+      component: DicManager,
+      meta: {
+        title:'数据字典'
+      }
+    },
+    {
+      path: 'dictData',
+      name: 'dictData',
+      component: DictData,
+      meta: {
+        title:'字典详情'
       }
     }
   ]

@@ -64,7 +64,7 @@
               :data="roleList"
               border
               style="width: 100%"
-              v-loading = "false"
+              v-loading = "loadings"
               @selection-change="handleSelectionChange">
               <el-table-column
                    fixed
@@ -174,7 +174,8 @@
         isShow : false,
         userShow: false,
         roleId: 0,
-        isUpdate: false
+        isUpdate: false,
+        loadings: true
       }
     },
     mounted() {
@@ -201,6 +202,7 @@
           this.roleList = res.data.data.list
           this.pageNum = res.data.data.pageNum
           this.total = res.data.data.total
+          this.loadings = false
         })
       },
       addRole(id){

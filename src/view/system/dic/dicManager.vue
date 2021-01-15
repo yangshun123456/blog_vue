@@ -9,7 +9,7 @@
           <el-row>
             <el-col :span="4" :offset="1">
               <el-form-item label="用户名:">
-                  <el-input v-model="selectParam.username" placeholder="请输入用户名" class="half" size="small"></el-input>
+                  <el-input v-model="selectParam.typeName" placeholder="请输入字典名称" class="half" size="small"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="4" :offset="0">
@@ -38,72 +38,57 @@
         </el-form>
         <!-- 用户数据 -->
         <div style="margin-bottom: 10px">
-          <el-button type="primary" size="medium" @click="addUser">+ 新增</el-button>
+          <el-button type="primary" size="medium" @click="openDict(1)">+ 新增</el-button>
         </div>
         <el-table
-            :data="userList"
+            :data="dictList"
             border
             style="width: 100%"
             v-loading = "loadings">
            <el-table-column
                 fixed
-                label="序号"
-                width="100"
+                label="编号"
+                width="220"
                 type="index"
 								align="center">
            </el-table-column>
            <el-table-column
-                width="150"
-                label="头像"
-								align="center"
-                >
-                <template slot-scope="scope"><img :src="scope.row.url" width="60px"/></template>
+                fixed
+                label="字典名称"
+                width="220"
+								align="center">
+                <template slot-scope="scope">{{ scope.row.dictName }}</template>
            </el-table-column>
            <el-table-column
-                label="昵称"
-                width="120"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.nickname }}</template>
+                fixed
+                label="字典类型"
+                width="220"
+                align="center">
+                <template slot-scope="scope">
+                  <el-link type="primary"
+                  :underline="false"
+                  @click="detailDict(scope.row)">
+                    {{ scope.row.dictType }}
+                  </el-link>
+                </template>
            </el-table-column>
            <el-table-column
-                label="用户名"
-                width="150"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.username }}</template>
+                fixed
+                label="备注"
+                width="220"
+           								align="center">
+                <template slot-scope="scope">{{ scope.row.remark }}</template>
            </el-table-column>
            <el-table-column
-                label="真实姓名"
-                width="120"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.relname }}</template>
+                fixed
+                label="创建时间"
+                width="220"
+           								align="center">
+                <template slot-scope="scope">{{ scope.row.createTime }}</template>
            </el-table-column>
-           <el-table-column
-                label="身份证号"
-                width="180"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.idCard }}</template>
-           </el-table-column>
-           <el-table-column
-                label="手机号"
-                width="150"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.phone }}</template>
-           </el-table-column>
-           <el-table-column
-                label="邮箱"
-                width="200"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.email }}</template>
-           </el-table-column>
-					 <el-table-column
-					      label="创建时间"
-					      width="180"
-								align="center">
-					      <template slot-scope="scope">{{ scope.row.createTime }}</template>
-					 </el-table-column>
            <el-table-column
                 label="状态"
-                width="100"
+                width="220"
 								align="center">
                  <template slot-scope="scope">
                     <el-switch
@@ -120,12 +105,53 @@
                 label="操作"
 								align="center">
                  <template slot-scope="scope">
-                   <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">详情</el-button>
-                   <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
+                   <el-button type="text" style="color:#19D185" size="mini" @click="openDict(2,scope.row)">修改</el-button>
                    <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
                  </template>
            </el-table-column>
         </el-table>
+
+        <!-- 新增、修改 -->
+        <el-dialog
+          :title="this.type == 1 ? '新增类型' : '修改类型'"
+          :visible.sync="isShow"
+          width="30%"
+          :before-close="handleClose"
+          :close-on-click-modal="false">
+          <div :loading="dialogLoading">
+            <el-form ref="formData"
+              :model="formData"
+              label-width="80px">
+              <el-form-item label="字典名称:"
+                prop="dictName"
+                :rules="{ required: true, message: '请输入字典名称', trigger: 'blur' }"
+                label-width="90px">
+                <el-input v-model="formData.dictName" placeholder="请输入字典名称"/>
+              </el-form-item>
+              <el-form-item label="字典类型:"
+                prop="dictType"
+                :rules="{ required: true, message: '请输入字典类型', trigger: 'blur' }"
+                label-width="90px">
+                <el-input v-model="formData.dictType" placeholder="请输入字典类型"/>
+              </el-form-item>
+              <el-form-item label="状态:" label-width="90px">
+                <el-radio-group v-model="formData.status" style="position: relative; top: 5px;">
+                  <el-radio :label="1">启用</el-radio>
+                  <el-radio :label="2">禁用</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="备注:" label-width="90px">
+               <el-input v-model="formData.remark" placeholder="请输入备注"/>
+              </el-form-item>
+              <el-row>
+                <el-col :span="8" :offset="17">
+                  <el-button type="primary" size="medium" @click="save" :loading="buttonLoading">保存</el-button>
+                  <el-button type="primary" size="medium" @click="handleClose">取消</el-button>
+                </el-col>
+              </el-row>
+            </el-form>
+          </div>
+        </el-dialog>
       </el-main>
       <el-footer>
          <el-pagination
@@ -143,12 +169,12 @@
 </template>
 
 <script>
-  import { findAll, status, deleteUser } from '@/api/system/userManage.js'
+  import { findAll, status, deleteType, detail, save } from '@/api/system/dicManager.js'
   export default{
     data() {
       return {
         selectParam: {
-					username: '',
+					typeName: '',
 					status: '',
           pageNum: 1,
           pageSize: 8
@@ -157,10 +183,18 @@
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },
         ],
-        userList: [],
+        dictList: [],
         page_sizes: [8, 16, 30, 50],
         total: 0,
-        loadings: true
+        loadings: true,
+        dialogLoading: false,
+        buttonLoading: false,
+
+        isShow: false,
+        formData: {
+          status: 1
+        },
+        type: 1
       }
     },
     mounted() {
@@ -175,7 +209,7 @@
       loading(){
         const param = this.selectParam
         findAll(param).then(res => {
-          this.userList = res.data.data.list
+          this.dictList = res.data.data.list
           this.pageNum = res.data.data.pageNum
           this.total = res.data.data.total
           this.loadings = false
@@ -244,19 +278,17 @@
         });
       },
 			reset(){
-				this.selectParam.username = ''
+				this.selectParam.typeName = ''
 				this.selectParam.status = ''
 				this.loading()
 			},
-			detailUser(row) {
-				const type = 3
-				this.$router.push({
-				  name: 'userDetail',
-				  params: {
-				    type: type,
-				    id: row.id
-				  }
-				})
+			detailDict(row) {
+        this.$router.push({
+          path: 'dictData',
+          query: {
+            type: row.dictType
+          }
+        })
 			},
       //分页size改变时
       handleSizeChange(val){
@@ -267,6 +299,42 @@
       handleCurrentChange(val){
         this.selectParam.pageNum = val
         this.loading()
+      },
+      // 关闭dialog
+      handleClose(){
+        this.isShow = false
+      },
+      // 新增/修改类型，打开窗口
+      openDict(type, row){
+        this.type = type
+        this.isShow = true
+        if(type === 2){
+          this.dialogLoading = true
+          detail({id: row.dictId}).then(res => {
+            this.formData = res.data.data
+            this.dialogLoading = false
+          }).catch(err => {
+            this.dialogLoading = false
+          })
+        }
+      },
+      // 保存
+      save(){
+        this.$refs['formData'].validate((res, valid) => {
+           if (res) {
+              this.buttonLoading = true
+              save(this.formData).then(res => {
+                this.buttonLoading = false
+                this.isShow = false
+                this.loading()
+              }).catch(err => {
+                this.buttonLoading = false
+              })
+           } else {
+              return false;
+           }
+        })
+
       }
 		}
 	}

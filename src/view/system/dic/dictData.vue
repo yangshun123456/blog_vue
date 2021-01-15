@@ -8,20 +8,13 @@
         <el-form :inline="true" :model="selectParam" class="demo-form-inline">
           <el-row>
             <el-col :span="4" :offset="1">
-              <el-form-item label="用户名:">
-                  <el-input v-model="selectParam.username" placeholder="请输入用户名" class="half" size="small"></el-input>
+              <el-form-item label="字典类型:">
+                  <el-input v-model="selectParam.dictName" placeholder="请输入字典类型" class="half" size="small"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="4" :offset="0">
-              <el-form-item label="状态:" >
-                  <el-select v-model="selectParam.status" placeholder="请选择状态" class="half" size="small" @change="loading">
-                      <el-option
-                        v-for="item in statusOption"
-                        :key="item.id"
-                        :label="item.value"
-                        :value="item.id">
-                      </el-option>
-                    </el-select>
+            <el-col :span="4" :offset="1">
+              <el-form-item label="字典标签:">
+                  <el-input v-model="selectParam.dictType" placeholder="请输入字典标签" class="half" size="small"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="1.2">
@@ -38,91 +31,55 @@
         </el-form>
         <!-- 用户数据 -->
         <div style="margin-bottom: 10px">
-          <el-button type="primary" size="medium" @click="addUser">+ 新增</el-button>
+          <el-button type="primary" size="medium" @click="">+ 新增</el-button>
         </div>
         <el-table
-            :data="userList"
+            :data="dataList"
             border
             style="width: 100%"
             v-loading = "loadings">
            <el-table-column
                 fixed
                 label="序号"
-                width="100"
+                width="220"
                 type="index"
 								align="center">
            </el-table-column>
            <el-table-column
-                width="150"
-                label="头像"
-								align="center"
-                >
-                <template slot-scope="scope"><img :src="scope.row.url" width="60px"/></template>
+                label="字典标签"
+                width="220"
+								align="center">
+                <template slot-scope="scope">{{ scope.row.dictLabel }}</template>
            </el-table-column>
            <el-table-column
-                label="昵称"
-                width="120"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.nickname }}</template>
+                label="字典键值"
+                width="220"
+                align="center">
+                <template slot-scope="scope">{{ scope.row.dictValue }}</template>
            </el-table-column>
            <el-table-column
-                label="用户名"
-                width="150"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.username }}</template>
+                label="字典键值"
+                width="220"
+                align="center">
+                <template slot-scope="scope">{{ scope.row.dictSort }}</template>
            </el-table-column>
            <el-table-column
-                label="真实姓名"
-                width="120"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.relname }}</template>
+                label="备注"
+                width="220"
+                align="center">
+                <template slot-scope="scope">{{ scope.row.remark }}</template>
            </el-table-column>
            <el-table-column
-                label="身份证号"
-                width="180"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.idCard }}</template>
-           </el-table-column>
-           <el-table-column
-                label="手机号"
-                width="150"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.phone }}</template>
-           </el-table-column>
-           <el-table-column
-                label="邮箱"
-                width="200"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.email }}</template>
-           </el-table-column>
-					 <el-table-column
-					      label="创建时间"
-					      width="180"
-								align="center">
-					      <template slot-scope="scope">{{ scope.row.createTime }}</template>
-					 </el-table-column>
-           <el-table-column
-                label="状态"
-                width="100"
-								align="center">
-                 <template slot-scope="scope">
-                    <el-switch
-                      v-model="scope.row.status"
-                      :active-value="1"
-                      :inactive-value="2"
-                      active-color="#13ce66"
-                      inactive-color=""
-                      @change="status_switch(scope.row)">
-                    </el-switch>
-                 </template>
+                label="创建时间"
+                width="220"
+                align="center">
+                <template slot-scope="scope">{{ scope.row.createTime }}</template>
            </el-table-column>
            <el-table-column
                 label="操作"
 								align="center">
                  <template slot-scope="scope">
                    <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">详情</el-button>
-                   <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
-                   <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
                  </template>
            </el-table-column>
         </el-table>
@@ -143,13 +100,13 @@
 </template>
 
 <script>
-  import { findAll, status, deleteUser } from '@/api/system/userManage.js'
+  import { listData, dataDetail, dataDelete, saveData } from '@/api/system/dicManager.js'
   export default{
     data() {
       return {
         selectParam: {
-					username: '',
-					status: '',
+					dictName: '',
+          dictType: '',
           pageNum: 1,
           pageSize: 8
 				},
@@ -157,7 +114,7 @@
           { 'id': 1,value:'启动' },
           { 'id': 2,value:'停用' },
         ],
-        userList: [],
+        dataList: [],
         page_sizes: [8, 16, 30, 50],
         total: 0,
         loadings: true
@@ -173,9 +130,10 @@
     },
     methods: {
       loading(){
+        this.selectParam.dictType = this.$route.query.type
         const param = this.selectParam
-        findAll(param).then(res => {
-          this.userList = res.data.data.list
+        listData(param).then(res => {
+          this.dataList = res.data.data.list
           this.pageNum = res.data.data.pageNum
           this.total = res.data.data.total
           this.loadings = false
@@ -204,25 +162,6 @@
           }
         })
       },
-      addUser(){
-        const type = 1
-        this.$router.push({
-          name: 'userAdd',
-          params: {
-            type: type
-          }
-        })
-      },
-      updateUser(row){
-        const type = 2
-        this.$router.push({
-          name: 'userUpdate',
-          params: {
-            type: type,
-            id: row.id
-          }
-        })
-      },
       deleteUser(row){
         const id = row.id
         this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
@@ -244,7 +183,7 @@
         });
       },
 			reset(){
-				this.selectParam.username = ''
+				this.selectParam.dictName = ''
 				this.selectParam.status = ''
 				this.loading()
 			},

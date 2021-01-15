@@ -53,54 +53,11 @@
 								align="center">
            </el-table-column>
            <el-table-column
-                width="150"
-                label="头像"
-								align="center"
-                >
-                <template slot-scope="scope"><img :src="scope.row.url" width="60px"/></template>
-           </el-table-column>
-           <el-table-column
                 label="昵称"
                 width="120"
 								align="center">
                 <template slot-scope="scope">{{ scope.row.nickname }}</template>
            </el-table-column>
-           <el-table-column
-                label="用户名"
-                width="150"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.username }}</template>
-           </el-table-column>
-           <el-table-column
-                label="真实姓名"
-                width="120"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.relname }}</template>
-           </el-table-column>
-           <el-table-column
-                label="身份证号"
-                width="180"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.idCard }}</template>
-           </el-table-column>
-           <el-table-column
-                label="手机号"
-                width="150"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.phone }}</template>
-           </el-table-column>
-           <el-table-column
-                label="邮箱"
-                width="200"
-								align="center">
-                <template slot-scope="scope">{{ scope.row.email }}</template>
-           </el-table-column>
-					 <el-table-column
-					      label="创建时间"
-					      width="180"
-								align="center">
-					      <template slot-scope="scope">{{ scope.row.createTime }}</template>
-					 </el-table-column>
            <el-table-column
                 label="状态"
                 width="100"
@@ -121,8 +78,6 @@
 								align="center">
                  <template slot-scope="scope">
                    <el-button type="text" style="color:#4794F7" size="mini" @click="detailUser(scope.row)">详情</el-button>
-                   <el-button type="text" style="color:#19D185" size="mini" @click="updateUser(scope.row)">修改</el-button>
-                   <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
                  </template>
            </el-table-column>
         </el-table>
@@ -201,25 +156,6 @@
             row.status = 2
           }else if(status_val === 2){
             row.status = 1
-          }
-        })
-      },
-      addUser(){
-        const type = 1
-        this.$router.push({
-          name: 'userAdd',
-          params: {
-            type: type
-          }
-        })
-      },
-      updateUser(row){
-        const type = 2
-        this.$router.push({
-          name: 'userUpdate',
-          params: {
-            type: type,
-            id: row.id
           }
         })
       },

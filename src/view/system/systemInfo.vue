@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="infodiv">
     <el-container>
         <el-header>
            <!-- <el-button @click="_initSockJs" type="primary" :disabled="isConnected">手动连接</el-button>
@@ -110,9 +110,16 @@
     },
     methods:{
       initData(){
+        const loading = this.$loading({
+          target: '#infodiv',
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.8)'
+         });
         systemInfo().then(res => {
           this.server = res.data.data
-
+          loading.close()
         })
       },
       initSoctJs(){
