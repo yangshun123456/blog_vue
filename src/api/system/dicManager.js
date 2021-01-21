@@ -67,6 +67,14 @@ export function dataDelete(query){
 export function saveData(query){
   return request({
     url: '/dic/saveData',
+    method: 'post',
+    data: query
+  })
+}
+
+export function getDictType(query){
+  return request({
+    url: '/dic/getDictType',
     method: 'get',
     data: query
   })

@@ -69,7 +69,7 @@
           </el-col>
           <el-col :span="7" :offset="1">
             <el-form-item label="显示顺序:">
-              <el-input-number v-model="formData.orderNum" :min="1" :max="10" size="small"/>
+              <el-input-number v-model="formData.orderNum" :min="1" :max="100" size="small"/>
             </el-form-item>
           </el-col>
           <el-col :span="24">

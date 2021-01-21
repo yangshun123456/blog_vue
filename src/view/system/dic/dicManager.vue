@@ -106,7 +106,7 @@
 								align="center">
                  <template slot-scope="scope">
                    <el-button type="text" style="color:#19D185" size="mini" @click="openDict(2,scope.row)">修改</el-button>
-                   <el-button type="text" style="color:#F52222" size="mini" @click="deleteUser(scope.row)">删除</el-button>
+                   <el-button type="text" style="color:#F52222" size="mini" @click="deleteDic(scope.row)">删除</el-button>
                  </template>
            </el-table-column>
         </el-table>
@@ -144,9 +144,9 @@
                <el-input v-model="formData.remark" placeholder="请输入备注"/>
               </el-form-item>
               <el-row>
-                <el-col :span="8" :offset="17">
-                  <el-button type="primary" size="medium" @click="save" :loading="buttonLoading">保存</el-button>
-                  <el-button type="primary" size="medium" @click="handleClose">取消</el-button>
+                <el-col :span="12" :offset="14">
+                  <el-button type="primary" size="medium" @click="save" :loading="buttonLoading" style="width: 100px;">保存</el-button>
+                  <el-button type="primary" size="medium" @click="handleClose" style="width: 100px;">取消</el-button>
                 </el-col>
               </el-row>
             </el-form>
@@ -238,33 +238,14 @@
           }
         })
       },
-      addUser(){
-        const type = 1
-        this.$router.push({
-          name: 'userAdd',
-          params: {
-            type: type
-          }
-        })
-      },
-      updateUser(row){
-        const type = 2
-        this.$router.push({
-          name: 'userUpdate',
-          params: {
-            type: type,
-            id: row.id
-          }
-        })
-      },
-      deleteUser(row){
-        const id = row.id
-        this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+      deleteDic(row){
+        const id = row.dictId
+        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          deleteUser({id: id}).then()
+          deleteType({id: id}).then()
           this.$message({
             type: 'success',
             message: '删除成功!'
